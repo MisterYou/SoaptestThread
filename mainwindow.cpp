@@ -12,13 +12,17 @@ MainWindow::MainWindow(QWidget *parent) :
     //http = new QtSoapHttpTransport;
     connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
     connect(ui->startButton,SIGNAL(clicked()),this,SLOT(submitRequest()));
-   //  http.setHost("www.abundanttech.com");
-   // http.setAction("http://www.abundanttech.com/WebServices/Population/getPopulation");
-
-    //  http.setHost("10.24.20.101",51908);
-    http.setHost("10.24.20.101",8080);
-    http.setAction("http://10.24.20.101:8080/Test/services/CalculateService?wsdl");
-
+/*
+    QtSoapMessage request;
+    request.setMethod(QtSoapQName("plus","http://edu.sjtu.webservice"));
+    // request.addMethodArgument("x","",ui->inputEdit->text().toInt());
+    request.addMethodArgument("x","",3);
+*/
+    //  http.setHost("192.168.0.101",8080);
+    http.setHost("127.0.0.1",8080);
+    //http.setAction("http://10.24.20.101:8080/Test/services/CalculateService?wsdl");
+    http.setAction("http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
+  //  http.submitRequest(request,"http://192.168.0.101:8080/Test/services/CalculateService?wsdl");
 
 
 }
@@ -30,7 +34,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::submitRequest()
 {
-    if(ui->inputEdit->text() == "")
+    if(ui->inputEdit->text() == ""||ui->inputEdit_2->text() == "")
     {
         QMessageBox::warning(this, tr("Missing license key"),
                      tr("Please enter your Google Web APIs license key."
@@ -40,10 +44,13 @@ void MainWindow::submitRequest()
         return;
     }
     QtSoapMessage request;
-    request.setMethod(QtSoapQName("plus","http://edu.sjtu.webservice"));
-     request.addMethodArgument("x","",ui->inputEdit->text().toInt());
+   // request.setMethod(QtSoapQName("shSer","http://edu.sjtu.webservice"));
+    request.setMethod(QtSoapQName("shSer","http://webservice.sjtu.edu"));
+    // request.addMethodArgument("x","",ui->inputEdit->text().toInt());
+    request.addMethodArgument("str1","",ui->inputEdit->text());
+     request.addMethodArgument("str2","",ui->inputEdit_2->text());
     //request.addMethodArgument("num2","",ui->inputEdit_2->text().toFloat());
-    http.submitRequest(request,"http://10.24.20.101:8080/Test/services/CalculateService?wsdl");
+    http.submitRequest(request,"http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
    // QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
 }
@@ -62,6 +69,7 @@ void MainWindow::getResponse()
              return;
          }
          ui->ouputEdit->setText(res.toString());
+         qDebug() << res.toString();
      }
 
 }
