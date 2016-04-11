@@ -13,9 +13,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    qextserialbase.cpp \
+    posix_qextserialport.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    posix_qextserialport.h \
+    qextserialbase.h
 
 FORMS    += mainwindow.ui
 
