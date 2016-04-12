@@ -29,21 +29,28 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(readTimer,SIGNAL(timeout()),this,SLOT(readMyCom()));//信号和槽函数关联，当达到定时时间时，进行读串口操作
 
 //-------------------------------访问webservice--------------------------//
-/*
-  //  connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
-    //connect(ui->startButton,SIGNAL(clicked()),this,SLOT(submitRequest()));
 
+   connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
+   //connect(ui->startButton,SIGNAL(clicked()),this,SLOT(submitRequest()));
+/*---------------------测试------------------------------
     QtSoapMessage request;
     request.setMethod(QtSoapQName("plus","http://edu.sjtu.webservice"));
     // request.addMethodArgument("x","",ui->inputEdit->text().toInt());
     request.addMethodArgument("x","",3);
-
+-----------------------------------------------------------*/
     //  http.setHost("192.168.0.101",8080);
+
     http.setHost("127.0.0.1",8080);
     http.setAction("http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
-  //  http.submitRequest(request,"http://192.168.0.101:8080/Test/services/CalculateService?wsdl");
+    // http.setAction("http://127.0.0.1:8080/Test/services/CalculateService?wsdl");
 
-*/
+
+
+
+    /*
+    http.setHost("192.168.0.100",8080);
+    http.setAction("http://192.168.0.100:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
+    */
 }
 
 MainWindow::~MainWindow()
@@ -52,7 +59,7 @@ MainWindow::~MainWindow()
 }
 
 
-
+/*--------------------------按钮测试----------------------------
 void MainWindow::submitRequest()
 {
     if(ui->inputEdit->text() == ""||ui->inputEdit_2->text() == "")
@@ -65,29 +72,33 @@ void MainWindow::submitRequest()
         return;
     }
     QtSoapMessage request;
-    request.setMethod(QtSoapQName("shSer","http://webservice.sjtu.edu"));
-    request.addMethodArgument("str1","",ui->inputEdit->text());
-     request.addMethodArgument("str2","",ui->inputEdit_2->text());
-    http.submitRequest(request,"http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
+    request.setMethod(QtSoapQName("plus","http://webservice.sjtu.edu"));
+    request.addMethodArgument("x","",ui->inputEdit->text().toFloat());
+     request.addMethodArgument("y","",ui->inputEdit_2->text().toFloat());
+    http.submitRequest(request,"http://127.0.0.1:8080/Test/services/CalculateService?wsdl");
    // QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
 }
+---------------------------------------------------------------------------------*/
 
 void MainWindow::getResponse()
 {
-     const QtSoapMessage &message = http.getResponse();
+      const QtSoapMessage &message = http.getResponse();
      if (message.isFault()) {
-       //qDebug("Error: %s", message.faultString().value().toString().toLatin1().constData());
+         qDebug("Error: %s", message.faultString().value().toString().toLatin1().constData());
          qDebug("Error: %s", qPrintable(message.faultString().toString()));
     }
      else{
-         const QtSoapType &res = message.returnValue();
+      //   const QtSoapType &res = message.returnValue();
+        const QtSoapType &res = message.returnValue();
          if(!res.isValid()){
              ui->ouputEdit->text().append("invalid return value");
+           // qDebug() << res.toString();
              return;
          }
-         ui->ouputEdit->setText(res.toString());
-         qDebug() << res.toString();
+        ui->ouputEdit->setText(res.toString());
+        qDebug() << res.toString();
+
      }
 
 }
@@ -103,17 +114,17 @@ void MainWindow::readMyCom()
          str2 = strlist[1];
          qDebug()<<str1;
          qDebug()<<str2;
-/*
-         connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
 
-        QtSoapMessage request;
-        request.setMethod(QtSoapQName("shSer","http://webservice.sjtu.edu"));
+     //    connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
+
+         QtSoapMessage request;
+         request.setMethod(QtSoapQName("shSer","http://webservice.sjtu.edu"));
         request.addMethodArgument("str1","",str1);
          request.addMethodArgument("str2","",str2);
-         http.setHost("127.0.0.1",8080);
-         http.setAction("http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
         http.submitRequest(request,"http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
-*/
+
+        //http.submitRequest(request,"http://192.168.0.100:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
+
     }
 }
 

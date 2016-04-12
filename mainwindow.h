@@ -23,7 +23,7 @@ public:
 
 
 private slots:
-    void submitRequest();//调用接口
+    //void submitRequest();//调用接口
     void getResponse();//接收webservice返回的数据
 
     void readMyCom();//读取串口
