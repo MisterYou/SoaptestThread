@@ -6,27 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>288</width>
-    <height>255</height>
+    <width>554</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="startButton">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>80</y>
-      <width>80</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>计算</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
@@ -71,27 +58,28 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QTextEdit" name="ouputEdit">
     <property name="geometry">
      <rect>
-      <x>9</x>
-      <y>154</y>
-      <width>154</width>
-      <height>29</height>
+      <x>80</x>
+      <y>150</y>
+      <width>251</width>
+      <height>141</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>结果：</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="ouputEdit"/>
-     </item>
-    </layout>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>155</y>
+      <width>36</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>结果：</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -99,7 +87,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>288</width>
+     <width>554</width>
      <height>25</height>
     </rect>
    </property>

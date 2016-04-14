@@ -28,12 +28,15 @@ private slots:
 
     void readMyCom();//读取串口
 
+    void inputMyCom();//下发指令
+
     
 private:
     Ui::MainWindow *ui;
     QtSoapHttpTransport http;
     Posix_QextSerialPort *myCom;//串口
     QTimer *readTimer;//定时器
+    QTimer *inputTimer;
 
 
 };
