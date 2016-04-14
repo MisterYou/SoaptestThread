@@ -24,9 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
     myCom->setFlowControl(FLOW_OFF);     //数据流控制设置，我们设置为无数据流控制
 
     myCom->setTimeout(200);   //延时设置，我们设置为延时200ms,如果设置为500ms的话，会造成程序无响应，原因未知
-    readTimer = new QTimer(this);//设置读取计时器
-    readTimer->start(100);//设置延时为100ms
-    connect(readTimer,SIGNAL(timeout()),this,SLOT(readMyCom()));//信号和槽函数关联，当达到定时时间时，进行读串口操作
+   // readTimer = new QTimer(this);//设置读取计时器
+   // readTimer->start(100);//设置延时为100ms
+   // connect(readTimer,SIGNAL(timeout()),this,SLOT(readMyCom()));//信号和槽函数关联，当达到定时时间时，进行读串口操作
 
     inputTimer = new QTimer(this);
     inputTimer->start(1000);
@@ -84,7 +84,7 @@ void MainWindow::submitRequest()
 
 void MainWindow::getResponse()
 {
-    QString str;
+    QString str,strorder;
       const QtSoapMessage &message = http.getResponse();
      if (message.isFault()) {
          qDebug("Error: %s", message.faultString().value().toString().toLatin1().constData());
@@ -97,21 +97,38 @@ void MainWindow::getResponse()
              ui->ouputEdit->append("invalid return value");
              return;
          }
-        ui->ouputEdit->append(res.toString());
-        //qDebug() << res.toString();
+        //ui->ouputEdit->append(res.toString());
+        qDebug() << res.toString();
 
         str = res.toString();
         QStringList strlist = str.split(" ");
         if(strlist[0] == "0"){
             qDebug()<<"No order";
+            ui->textEdit->append("No order");
         }else if(strlist[0] == "1"){
-            myCom->write(strlist[1].toAscii());
+            if(strlist[1] == "air-conditioning"){
+                strorder = "KT "+strlist[2];
+                //qDebug()<<strorder;
+                ui->textEdit->append("insert success");
+                myCom->write(strorder.toAscii());
+            } else if(strlist[1] == "light"){
+                strorder = "LT "+strlist[2];
+                myCom->write(strorder.toAscii());
+                ui->textEdit->append("insert success");
+            } else if(strlist[1] == "television"){
+                strorder = "TV "+strlist[2];
+                myCom->write(strorder.toAscii());
+                ui->textEdit->append("insert success");
+            }
+
         }else if(strlist[0] == "2"){
              qDebug()<<"Have some error";
         }else if(strlist[0] == "3"){
             qDebug()<<"upload success";
+            ui->ouputEdit->append("upload success");
        }else if(strlist[0] == "4"){
             qDebug()<<"upload error";
+             ui->ouputEdit->append("upload error");
        }
 
 
@@ -123,25 +140,47 @@ void MainWindow::getResponse()
 void MainWindow::readMyCom()
 {
     QByteArray temp = myCom->readAll(); //读取串口缓冲区的所有数据给临时变量temp
-    QString str,str1,str2;
+    QString str,str1,str2,str3;
+    int wendu,shidu;
+
     if(!temp.isEmpty()){
+         qDebug()<<temp;
          str =QString(temp);
-         QStringList strlist = str.split(" ");
+         qDebug()<<str;
+
+         /*
+         QStringList strlist = str.at(2).sp;
          str1 = strlist[0];
-         str2 = strlist[1];
+         str2 = strlist[1];*/
+         wendu=str.mid(0,2).toInt();
+         shidu = str.mid(2,2).toInt();
+         if(wendu>10 && wendu<35){
+             if(shidu>20&&shidu<50){
+                 str3="normal";
+             }
+             else{
+                 str3 = "warning";
+             }
+         }else{
+             str3 = "warning";
+         }
+
+         str1=str.mid(0,2);
+         str2 = str.mid(2,2);
          qDebug()<<str1;
          qDebug()<<str2;
+         qDebug()<<str3;
 
      //    connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
 
          QtSoapMessage request;
          request.setMethod(QtSoapQName("shSer","http://webservice.sjtu.edu"));
-        request.addMethodArgument("str1","",str1);
+         request.addMethodArgument("str1","",str1);
          request.addMethodArgument("str2","",str2);
+         request.addMethodArgument("str3","",str3);
         http.submitRequest(request,"http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
 
      //   http.submitRequest(request,"http://192.168.0.100:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
-
     }
 }
 
