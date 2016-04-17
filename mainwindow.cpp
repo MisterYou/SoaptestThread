@@ -24,36 +24,35 @@ MainWindow::MainWindow(QWidget *parent) :
     myCom->setFlowControl(FLOW_OFF);     //数据流控制设置，我们设置为无数据流控制
 
     myCom->setTimeout(200);   //延时设置，我们设置为延时200ms,如果设置为500ms的话，会造成程序无响应，原因未知
+
+//    connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
+/*
+    uploadThread = new UploadThread(this);
+    uploadThread->setMessage(myCom);
+    uploadThread->start();
+*/
+    inputThread = new InputThread(this);
+    inputThread->setMessage(myCom);
+    inputThread->start();
+
+     http.setHost("127.0.0.1",8080);
+    http.setAction("http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
+
     //---------------------------上传数据----------------------------//
 
     readTimer = new QTimer(this);//设置读取计时器
-    readTimer->start(1000);//设置延时为100ms
+    readTimer->start(100);//设置延时为100ms
     connect(readTimer,SIGNAL(timeout()),this,SLOT(readMyCom()));//信号和槽函数关联，当达到定时时间时，进行读串口操作
 
-
+  /*******************************************  采用两个定时器形式
 //--------------------------------读取指令-----------------------//
     inputTimer = new QTimer(this);
     inputTimer->start(1000);
     connect(inputTimer,SIGNAL(timeout()),this,SLOT(inputMyCom()));
 
+ *********************************************************/
 
 //-------------------------------访问webservice--------------------------//
-
-   connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
-   //connect(ui->startButton,SIGNAL(clicked()),this,SLOT(submitRequest()));
-/*---------------------测试------------------------------
-    QtSoapMessage request;
-    request.setMethod(QtSoapQName("plus","http://edu.sjtu.webservice"));
-    // request.addMethodArgument("x","",ui->inputEdit->text().toInt());
-    request.addMethodArgument("x","",3);
------------------------------------------------------------*/
-    //  http.setHost("192.168.0.101",8080);
-
-    http.setHost("127.0.0.1",8080);
-    http.setAction("http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
-    // http.setAction("http://127.0.0.1:8080/Test/services/CalculateService?wsdl");
-
-
 
    // http.setHost("192.168.0.100",8080);
    // http.setAction("http://192.168.0.100:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
@@ -64,7 +63,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
 
 /*--------------------------按钮测试----------------------------
 void MainWindow::submitRequest()
@@ -87,7 +85,7 @@ void MainWindow::submitRequest()
 
 }
 ---------------------------------------------------------------------------------*/
-
+/*
 void MainWindow::getResponse()
 {
     QString str,strorder;
@@ -129,19 +127,11 @@ void MainWindow::getResponse()
 
         }else if(strlist[0] == "2"){
              qDebug()<<"Have some error";
-        }else if(strlist[0] == "3"){
-            qDebug()<<"upload success";
-            ui->ouputEdit->append("upload success");
-       }else if(strlist[0] == "4"){
-            qDebug()<<"upload error";
-             ui->ouputEdit->append("upload error");
-       }
-
-
-
+        }
      }
 
 }
+*/
 
 void MainWindow::readMyCom()
 {
@@ -151,22 +141,16 @@ void MainWindow::readMyCom()
     int wendu,shidu;
 
     if(!temp.isEmpty()){
-      //   qDebug()<<temp;
          str =QString(temp);
-     //     qDebug()<<str;
-
-       //  if(!str.isEmpty()){
-
                QStringList strlist = str.split(" ");
                str1 = strlist[0];
                str2 = strlist[1];
 
                 judge = str.mid(3,1);
-                qDebug()<<judge;
+              //  qDebug()<<str;
                 wendu=strlist[0].toInt();
                  shidu = strlist[1].toInt();
                if(judge =="O"|| judge=="C"){
-                   //myCom->write(str.toAscii());
                    qDebug()<<" hello";
                 }else{
                        if(wendu>10 && wendu<35){
@@ -179,12 +163,6 @@ void MainWindow::readMyCom()
                       }   else{
                         str3 = "warning";
                   }
-
-       //    qDebug()<<str1;
-      //     qDebug()<<str1.length();
-        //   qDebug()<<str2;
-          // qDebug()<<str2.length();
-         //   qDebug()<<str3;
                        QtSoapMessage request;
                        request.setMethod(QtSoapQName("shSer","http://webservice.sjtu.edu"));
                        request.addMethodArgument("str1","",str1);
@@ -192,20 +170,21 @@ void MainWindow::readMyCom()
                        request.addMethodArgument("str3","",str3);
                       http.submitRequest(request,"http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
          }
-     //    connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
+
 
      }
      //   http.submitRequest(request,"http://192.168.0.100:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
-  //}
+
 }
 
+/*
 void MainWindow::inputMyCom()
 {
     QtSoapMessage request;
     request.setMethod(QtSoapQName("getOrder","http://webservice.sjtu.edu"));
     http.submitRequest(request,"http://192.168.0.100:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
 }
-
+*/
 
 
 
