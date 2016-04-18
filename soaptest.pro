@@ -17,13 +17,15 @@ SOURCES += main.cpp\
     qextserialbase.cpp \
     posix_qextserialport.cpp \
     uploadthread.cpp \
-    inputthread.cpp
+    inputthread.cpp \
+    gprsthread.cpp
 
 HEADERS  += mainwindow.h \
     posix_qextserialport.h \
     qextserialbase.h \
     uploadthread.h \
-    inputthread.h
+    inputthread.h \
+    gprsthread.h
 
 FORMS    += mainwindow.ui
 

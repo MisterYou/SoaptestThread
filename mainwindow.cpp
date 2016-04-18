@@ -25,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     myCom->setTimeout(200);   //延时设置，我们设置为延时200ms,如果设置为500ms的话，会造成程序无响应，原因未知
 
+
+    gprsthread = new GPRSThread(this);
 //    connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
 /*
     uploadThread = new UploadThread(this);
@@ -142,17 +144,19 @@ void MainWindow::readMyCom()
 
     if(!temp.isEmpty()){
          str =QString(temp);
-               QStringList strlist = str.split(" ");
-               str1 = strlist[0];
-               str2 = strlist[1];
 
-                judge = str.mid(3,1);
-              //  qDebug()<<str;
-                wendu=strlist[0].toInt();
-                 shidu = strlist[1].toInt();
-               if(judge =="O"|| judge=="C"){
-                   qDebug()<<" hello";
-                }else{
+         QStringList strlist = str.split(" ");
+         str1 = strlist[0];
+         str2 = strlist[1];
+
+          judge = str.mid(3,1);
+        //  qDebug()<<str;
+          wendu=strlist[0].toInt();
+           shidu = strlist[1].toInt();
+               if(judge !="O"&& judge !="C"){
+
+                   gprsthread->setMessage(str);
+                   gprsthread->start();
                        if(wendu>10 && wendu<35){
                        if(shidu>20&&shidu<50){
                           str3="normal";
@@ -169,14 +173,14 @@ void MainWindow::readMyCom()
                        request.addMethodArgument("str2","",str2);
                        request.addMethodArgument("str3","",str3);
                       http.submitRequest(request,"http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
-         }
+
 
 
      }
      //   http.submitRequest(request,"http://192.168.0.100:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
 
 }
-
+}
 /*
 void MainWindow::inputMyCom()
 {

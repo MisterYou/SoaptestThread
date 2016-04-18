@@ -10,6 +10,7 @@
 #include <QDebug>
 //#include "uploadthread.h"
 #include "inputthread.h"
+#include "gprsthread.h"
 
 namespace Ui {
 class MainWindow;
@@ -44,6 +45,7 @@ private:
 
  //  UploadThread *uploadThread;
    InputThread *inputThread;
+   GPRSThread *gprsthread;
 
 };
 
