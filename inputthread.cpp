@@ -3,8 +3,8 @@
 InputThread::InputThread(QObject *parent) :
     QThread(parent),http(this)
 {
-    http.setHost("127.0.0.1",8080);
-    http.setAction("http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
+    http.setHost("192.168.0.100",8080);
+    http.setAction("http://192.168.0.100:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
     connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
 }
 

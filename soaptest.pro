@@ -18,15 +18,18 @@ SOURCES += main.cpp\
     posix_qextserialport.cpp \
     uploadthread.cpp \
     inputthread.cpp \
-    gprsthread.cpp
+    gprsthread.cpp \
+    dialog.cpp
 
 HEADERS  += mainwindow.h \
     posix_qextserialport.h \
     qextserialbase.h \
     uploadthread.h \
     inputthread.h \
-    gprsthread.h
+    gprsthread.h \
+    dialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    dialog.ui
 
 OTHER_FILES +=

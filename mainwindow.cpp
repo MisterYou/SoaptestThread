@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QtGui/QMessageBox>
 #include <QtGui/QCursor>
+#include <QTextCodec>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -9,6 +10,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowState(Qt::WindowMaximized);
+    //QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));//tr使用的编码
+   // QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));//QString使用的编码，没有这一条
+    //ui->pushButton->setText(QString::fromUtf8("离家"));
+    ui->pushButton->setFont(QFont("",60,QFont::Black));
+    ui->pushButton_2->setFont(QFont("",60,QFont::Black));
+    ui->pushButton_4->setFont(QFont("",60,QFont::Black));
+    ui->pushButton_3->setFont(QFont("",60,QFont::Black));
+    ui->pushButton_9->setFont(QFont("",60,QFont::Black));
+    ui->label->setFont(QFont("",60,QFont::Black));
+    ui->label_2->setFont(QFont("",60,QFont::Black));
+  //  ui->groupBox_;
 
     //-------------------------------打开串口----------------------------//
     myCom = new Posix_QextSerialPort("/dev/ttyUSB0",QextSerialBase::Polling);//定义串口对象，指名串口名和查询模式，使用polling
@@ -25,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     myCom->setTimeout(200);   //延时设置，我们设置为延时200ms,如果设置为500ms的话，会造成程序无响应，原因未知
 
+    dialog.setCom(myCom);
 
     gprsthread = new GPRSThread(this);
 //    connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
@@ -33,12 +47,13 @@ MainWindow::MainWindow(QWidget *parent) :
     uploadThread->setMessage(myCom);
     uploadThread->start();
 */
+
     inputThread = new InputThread(this);
     inputThread->setMessage(myCom);
     inputThread->start();
 
-     http.setHost("127.0.0.1",8080);
-    http.setAction("http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
+     http.setHost("192.168.0.100",8080);
+    http.setAction("http://192.168.0.100:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
 
     //---------------------------上传数据----------------------------//
 
@@ -46,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     readTimer->start(100);//设置延时为100ms
     connect(readTimer,SIGNAL(timeout()),this,SLOT(readMyCom()));//信号和槽函数关联，当达到定时时间时，进行读串口操作
 
-  /*******************************************  采用两个定时器形式
+/*******************************************  采用两个定时器形式
 //--------------------------------读取指令-----------------------//
     inputTimer = new QTimer(this);
     inputTimer->start(1000);
@@ -133,8 +148,8 @@ void MainWindow::getResponse()
      }
 
 }
-*/
 
+*/
 void MainWindow::readMyCom()
 {
     QByteArray temp = myCom->readAll(); //读取串口缓冲区的所有数据给临时变量temp
@@ -148,38 +163,46 @@ void MainWindow::readMyCom()
          QStringList strlist = str.split(" ");
          str1 = strlist[0];
          str2 = strlist[1];
-
+       // ui->textEdit->append(str);
           judge = str.mid(3,1);
         //  qDebug()<<str;
           wendu=strlist[0].toInt();
            shidu = strlist[1].toInt();
                if(judge !="O"&& judge !="C"){
-
+                    ui->lcdNumber->display(wendu);
+                    ui->lcdNumber_2->display(shidu);
                    gprsthread->setMessage(str);
                    gprsthread->start();
                        if(wendu>10 && wendu<35){
                        if(shidu>20&&shidu<50){
                           str3="normal";
+                          ui->lcdNumber->setPalette(Qt::white);
+                          ui->lcdNumber_2->setPalette(Qt::white);
+
                        }
                       else{
                           str3 = "warning";
+                       //   ui->lcdNumber->setPalette(Qt::red);
+                           ui->lcdNumber_2->setPalette(Qt::red);
                       }
                       }   else{
                         str3 = "warning";
+                        ui->lcdNumber->setPalette(Qt::red);
+                         ui->lcdNumber_2->setPalette(Qt::red);
                   }
                        QtSoapMessage request;
                        request.setMethod(QtSoapQName("shSer","http://webservice.sjtu.edu"));
                        request.addMethodArgument("str1","",str1);
                        request.addMethodArgument("str2","",str2);
                        request.addMethodArgument("str3","",str3);
-                      http.submitRequest(request,"http://127.0.0.1:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
+                      http.submitRequest(request,"http://192.168.0.100:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
 
 
 
      }
      //   http.submitRequest(request,"http://192.168.0.100:8080/SmartHomeWebservice/services/SmartHomeService?wsdl");
 
-}
+  }
 }
 /*
 void MainWindow::inputMyCom()
@@ -202,3 +225,16 @@ void MainWindow::inputMyCom()
 
 
 
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    this->close();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    this->hide();
+    dialog.show();
+    dialog.exec();
+    this->show();
+}
