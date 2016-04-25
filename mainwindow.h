@@ -13,6 +13,7 @@
 #include "gprsthread.h"
 #include "dialog.h"
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -41,6 +42,12 @@ private slots:
 
     void on_pushButton_3_clicked();
 
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_clicked();
+
+    void on_pushButton_9_clicked();
+
 private:
     Ui::MainWindow *ui;
     QtSoapHttpTransport http;
@@ -48,6 +55,7 @@ private:
 
     QTimer *readTimer;//定时器
     //QTimer *inputTimer;
+
 
  //  UploadThread *uploadThread;
    InputThread *inputThread;

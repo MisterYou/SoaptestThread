@@ -11,16 +11,36 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowState(Qt::WindowMaximized);
-    //QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));//tr使用的编码
-   // QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));//QString使用的编码，没有这一条
+   //  this->setWindowState(Qt::WindowFullScreen);
+
+    QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));//tr使用的编码
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));//QString使用的编码，没有这一条
     //ui->pushButton->setText(QString::fromUtf8("离家"));
-    ui->pushButton->setFont(QFont("",60,QFont::Black));
-    ui->pushButton_2->setFont(QFont("",60,QFont::Black));
-    ui->pushButton_4->setFont(QFont("",60,QFont::Black));
-    ui->pushButton_3->setFont(QFont("",60,QFont::Black));
-    ui->pushButton_9->setFont(QFont("",60,QFont::Black));
-    ui->label->setFont(QFont("",60,QFont::Black));
-    ui->label_2->setFont(QFont("",60,QFont::Black));
+    /*
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("gb2312"));
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("gb2312"));
+    QTextCodec::setCodecForTr(QTextCodec::codecForName("gb2312"));
+    */
+    this->setWindowTitle("智能家庭智能控制系统");
+
+    QPalette bgpal = palette();
+  //  bgpal.setColor (QPalette::Background, QColor (111,0 ,220, 255));
+    bgpal.setColor (QPalette::Background,"#358A2B");
+    this->setPalette(bgpal);
+    //--------------设置位数-------//
+    //ui->lcdNumber->setDigitCount(8);
+   // ui->lcdNumber_2->setDigitCount(8);
+
+ // setStyleSheet("QLCDNumber{color: red}");
+/*
+    ui->pushButton->setFont(QFont("",36,QFont::Black));
+    ui->pushButton_2->setFont(QFont("",36,QFont::Black));
+    ui->pushButton_4->setFont(QFont("",36,QFont::Black));
+    ui->pushButton_3->setFont(QFont("",36,QFont::Black));
+    ui->pushButton_9->setFont(QFont("",36,QFont::Black));
+    ui->label->setFont(QFont("",36,QFont::Black));
+    ui->label_2->setFont(QFont("",36,QFont::Black));
+    */
   //  ui->groupBox_;
 
     //-------------------------------打开串口----------------------------//
@@ -39,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent) :
     myCom->setTimeout(200);   //延时设置，我们设置为延时200ms,如果设置为500ms的话，会造成程序无响应，原因未知
 
     dialog.setCom(myCom);
+
+
 
     gprsthread = new GPRSThread(this);
 //    connect(&http,SIGNAL(responseReady()),this,SLOT(getResponse()));
@@ -157,6 +179,7 @@ void MainWindow::readMyCom()
     QString judge;
     int wendu,shidu;
 
+
     if(!temp.isEmpty()){
          str =QString(temp);
 
@@ -169,26 +192,67 @@ void MainWindow::readMyCom()
           wendu=strlist[0].toInt();
            shidu = strlist[1].toInt();
                if(judge !="O"&& judge !="C"){
-                    ui->lcdNumber->display(wendu);
-                    ui->lcdNumber_2->display(shidu);
+          //         ui->lcdNumber->display(strlist[0]+"°C");
+
+          //         ui->lcdNumber_2->display(strlist[1]+"RH%");
+/*
+                   QPalette pe;
+                   pe.setColor(QPalette::WindowText,Qt::white);
+                   ui->label_3->setPalette(pe);
+                   QPalette pe1;
+                   pe1.setColor(QPalette::WindowText,Qt::white);
+                   ui->label_4->setPalette(pe1);
+*/
+                   ui->label_3->setText(strlist[0]+"°C");
+                   ui->label_4->setText(strlist[1]+"RH%");
+
                    gprsthread->setMessage(str);
                    gprsthread->start();
                        if(wendu>10 && wendu<35){
                        if(shidu>20&&shidu<50){
                           str3="normal";
-                          ui->lcdNumber->setPalette(Qt::white);
-                          ui->lcdNumber_2->setPalette(Qt::white);
+               //           ui->lcdNumber->setPalette(Qt::white);
+               //           ui->lcdNumber_2->setPalette(Qt::white);
+                          QPalette pe2;
+                          pe2.setColor(QPalette::WindowText,Qt::white);
+                          ui->label_3->setPalette(pe2);
+                          QPalette pe3;
+                          pe3.setColor(QPalette::WindowText,Qt::white);
+                          ui->label_4->setPalette(pe3);
 
                        }
                       else{
                           str3 = "warning";
                        //   ui->lcdNumber->setPalette(Qt::red);
-                           ui->lcdNumber_2->setPalette(Qt::red);
+                       //    ui->lcdNumber_2->setPalette(Qt::red);
+                          QPalette pe4;
+                          pe4.setColor(QPalette::WindowText,Qt::red);
+                          ui->label_4->setPalette(pe4);
                       }
                       }   else{
-                        str3 = "warning";
-                        ui->lcdNumber->setPalette(Qt::red);
-                         ui->lcdNumber_2->setPalette(Qt::red);
+                           str3 = "warning";
+
+                                 if(shidu>20&&shidu<50){
+                                     QPalette pe5;
+                                     pe5.setColor(QPalette::WindowText,Qt::red);
+                                     ui->label_3->setPalette(pe5);
+                                     QPalette pe6;
+                                     pe6.setColor(QPalette::WindowText,Qt::white);
+                                     ui->label_4->setPalette(pe6);
+                                 }
+                                 else{
+                                     QPalette pe7;
+                                     pe7.setColor(QPalette::WindowText,Qt::red);
+                                     ui->label_3->setPalette(pe7);
+                                     QPalette pe8;
+                                     pe8.setColor(QPalette::WindowText,Qt::red);
+                                     ui->label_4->setPalette(pe8);
+                                 }
+
+
+                //        ui->lcdNumber->setPalette(Qt::red);
+                  //       ui->lcdNumber_2->setPalette(Qt::red);
+
                   }
                        QtSoapMessage request;
                        request.setMethod(QtSoapQName("shSer","http://webservice.sjtu.edu"));
@@ -214,18 +278,6 @@ void MainWindow::inputMyCom()
 */
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 void MainWindow::on_pushButton_4_clicked()
 {
     this->close();
@@ -237,4 +289,23 @@ void MainWindow::on_pushButton_3_clicked()
     dialog.show();
     dialog.exec();
     this->show();
+}
+//----------------------回家模式----------------------//
+void MainWindow::on_pushButton_2_clicked()
+{
+    QString str ;
+      str= "KT O";
+    myCom->write(str.toAscii());
+}
+//---------------------离家模式----------------------//
+void MainWindow::on_pushButton_clicked()
+{
+    QString str;
+    str= "KT C";
+    myCom->write(str.toAscii());
+}
+//-------------------------报警----------------------//
+void MainWindow::on_pushButton_9_clicked()
+{
+
 }
