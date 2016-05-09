@@ -12,6 +12,8 @@
 #include "inputthread.h"
 #include "gprsthread.h"
 #include "dialog.h"
+#include "QProcess"
+
 
 
 namespace Ui {

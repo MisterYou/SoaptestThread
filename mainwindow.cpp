@@ -307,5 +307,6 @@ void MainWindow::on_pushButton_clicked()
 //-------------------------报警----------------------//
 void MainWindow::on_pushButton_9_clicked()
 {
-
+    QProcess *proc = new QProcess;
+    proc->start("./app/madplay  /app/11.mp3");
 }
